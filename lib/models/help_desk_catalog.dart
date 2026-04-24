@@ -5,20 +5,18 @@ import 'package:json_schema_builder/json_schema_builder.dart';
 class HelpDeskCatalog {
   static Catalog asCatalog() {
     return Catalog(
-      items: [
-        // 1. Column for layout
+      [
+        // 1. Column Layout
         CatalogItem(
           name: 'Column',
-          dataSchema: S.object(properties: {
-            'components': S.list(items: S.object()),
-          }),
+          dataSchema: S.object(properties: {'children': S.list(items: S.string())}),
           widgetBuilder: (itemContext) {
             final props = itemContext.data as Map<String, dynamic>;
-            final components = props['components'] as List? ?? [];
+            final childrenIds = (props['children'] as List? ?? []).cast<String>();
             return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
-              children: components.map((c) => itemContext.renderComponent(c)).toList(),
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: childrenIds.map((id) => itemContext.buildChild(id)).toList(),
             );
           },
         ),
@@ -26,11 +24,7 @@ class HelpDeskCatalog {
         // 2. Product Card
         CatalogItem(
           name: 'ProductCard',
-          dataSchema: S.object(properties: {
-            'name': S.string(),
-            'price': S.string(),
-            'imageUrl': S.string(),
-          }),
+          dataSchema: S.object(properties: {'name': S.string(), 'price': S.string(), 'imageUrl': S.string()}),
           widgetBuilder: (itemContext) {
             final props = itemContext.data as Map<String, dynamic>;
             final context = itemContext.buildContext;

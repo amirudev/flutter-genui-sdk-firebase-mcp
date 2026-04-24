@@ -15,11 +15,9 @@ class _HelpDeskScreenState extends State<HelpDeskScreen> {
   final TextEditingController _textController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   
-  // TODO: Step 1 - Define GenUI Controllers
-  // late final SurfaceController _surfaceController;
-  // late final A2uiTransportAdapter _transportAdapter;
-  // late final Conversation _conversation;
-  
+  late final SurfaceController _surfaceController;
+  late final A2uiTransportAdapter _transportAdapter;
+  late final Conversation _conversation;
   late final ai.GenerativeModel _model;
   
   final List<Message> _messages = [];
@@ -31,55 +29,69 @@ class _HelpDeskScreenState extends State<HelpDeskScreen> {
   void initState() {
     super.initState();
     
-    // TODO: Step 2 - Initialize GenUI Surface and Catalog
-    // final catalog = HelpDeskCatalog.asCatalog();
-    // _surfaceController = SurfaceController(catalogs: [catalog]);
+    final catalog = HelpDeskCatalog.asCatalog();
+    _surfaceController = SurfaceController(catalogs: [catalog]);
     
-    // TODO: Step 3 - Create GenUI Prompt Builder
-    // final promptBuilder = PromptBuilder.chat(
-    //   catalog: catalog,
-    //   systemPromptFragments: [
-    //     'You are an AI support agent. You use a specific protocol for UI.',
-    //     ...
-    //   ],
-    // );
-
-    _model = ai.GenerativeModel(
-      model: 'gemini-1.5-flash', // or gemini-2.0-flash
-      apiKey: _apiKey,
-      // systemInstruction: ai.Content.system(promptBuilder.systemPromptJoined()),
+    final promptBuilder = PromptBuilder.chat(
+      catalog: catalog,
+      systemPromptFragments: [
+        'You are an AI support agent. You use a specific protocol for UI.',
+        'RULES:',
+        '1. If you want to show a UI component, use the JSON protocol.',
+        '2. ALWAYS wrap JSON in ```json ... ``` blocks.',
+        '3. NEVER mix text and JSON in the same line.',
+        '4. Keep conversation natural but concise.',
+        'Catalog items available: Column, ProductCard, FAQCard, OrderStatus, PromoCard, ShippingInfo, SupportContact, ComparisonTable.',
+        'CRITICAL: EVERY component in the "components" list MUST have a unique "id" string (e.g., "root", "prod_1", "prod_2").',
+        'Use the Column component to group multiple components (like multiple ProductCards).',
+        'DYNAMIC UPDATES: You can update a widget that you previously sent by reusing its ID.',
+        'AUTHORITY: You are allowed to give up to 20% discount if a user complains about the price. Use "updateComponents" to refresh the price on the existing card.',
+        'catalogId is always "help_desk".',
+        'Current Inventory:',
+        ...mockProducts.map((p) => '- ${p.title} (\$${p.price}) ID: prod_${p.id} Image: ${p.images.first}'),
+      ],
     );
 
-    // TODO: Step 4 - Initialize Transport and Conversation
-    // _transportAdapter = A2uiTransportAdapter(onSend: (message) async {});
-    // _conversation = Conversation(controller: _surfaceController, transport: _transportAdapter);
+    _model = ai.GenerativeModel(
+      model: 'gemini-2.5-flash',
+      apiKey: _apiKey,
+      systemInstruction: ai.Content.system(promptBuilder.systemPromptJoined()),
+    );
 
-    // TODO: Step 5 - Listen for Surface Updates
-    // _surfaceController.surfaceUpdates.listen((update) {
-    //   if (update is SurfaceAdded) {
-    //     setState(() {
-    //       _messages.add(Message(role: Role.assistant, surfaceId: update.surfaceId));
-    //     });
-    //     _scrollToBottom();
-    //   }
-    // });
+    _transportAdapter = A2uiTransportAdapter(onSend: (message) async {});
+    _conversation = Conversation(controller: _surfaceController, transport: _transportAdapter);
+
+    _surfaceController.surfaceUpdates.listen((update) {
+      if (update is SurfaceAdded) {
+        setState(() {
+          _messages.add(Message(role: Role.assistant, surfaceId: update.surfaceId));
+        });
+        _scrollToBottom();
+      }
+    });
   }
 
   @override
   void dispose() {
     _textController.dispose();
     _scrollController.dispose();
-    // _surfaceController.dispose();
-    // _transportAdapter.dispose();
-    // _conversation.dispose();
+    _surfaceController.dispose();
+    _transportAdapter.dispose();
+    _conversation.dispose();
     super.dispose();
   }
 
-  // Helper to clean AI response (removing JSON blocks from text chat)
+  // Improved filtering logic that works better with streaming
   String _cleanResponse(String text) {
+    // Remove markdown code blocks
     String cleaned = text.replaceAll(RegExp(r'```json[\s\S]*?```'), '');
     cleaned = cleaned.replaceAll(RegExp(r'```[\s\S]*?```'), '');
+    
+    // Remove raw JSON objects that look like GenUI commands
+    // This is a safety net for when the AI forgets backticks
     cleaned = cleaned.replaceAll(RegExp(r'\{[\s\S]*?"version"[\s\S]*?\}'), '');
+    
+    // Final trim and cleanup
     return cleaned.trim();
   }
 
@@ -122,8 +134,7 @@ class _HelpDeskScreenState extends State<HelpDeskScreen> {
         final chunkText = chunk.text ?? '';
         fullResponse += chunkText;
         
-        // TODO: Step 6 - Pass chunks to GenUI Transport
-        // _transportAdapter.addChunk(chunkText);
+        _transportAdapter.addChunk(chunkText);
 
         final visibleText = _cleanResponse(fullResponse);
 
@@ -171,11 +182,14 @@ class _HelpDeskScreenState extends State<HelpDeskScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FB),
       appBar: AppBar(
-        title: const Text('AI Help Desk (Tutorial)', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+        title: const Text('AI Help Desk', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
         centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.white,
         foregroundColor: Colors.black87,
+        actions: [
+          IconButton(onPressed: () => setState(() => _messages.clear()), icon: const Icon(Icons.refresh, size: 20)),
+        ],
       ),
       body: Column(
         children: [
@@ -186,15 +200,12 @@ class _HelpDeskScreenState extends State<HelpDeskScreen> {
               itemCount: _messages.length,
               itemBuilder: (context, index) {
                 final message = _messages[index];
-                
-                // TODO: Step 7 - Render GenUI Surface
-                // if (message.surfaceId != null) {
-                //   return Padding(
-                //     padding: const EdgeInsets.only(left: 44, bottom: 20, top: 4),
-                //     child: Surface(surfaceContext: _surfaceController.contextFor(message.surfaceId!)),
-                //   );
-                // }
-                
+                if (message.surfaceId != null) {
+                  return Padding(
+                    padding: const EdgeInsets.only(left: 44, bottom: 20, top: 4),
+                    child: Surface(surfaceContext: _surfaceController.contextFor(message.surfaceId!)),
+                  );
+                }
                 return _MessageBubble(message: message);
               },
             ),
