@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'screens/home_screen.dart';
+import 'screens/help_desk_screen.dart';
 
 void main() {
   runApp(
@@ -48,7 +49,7 @@ class _MainLayoutState extends State<MainLayout> {
     HomeScreen(),
     Center(child: Text('Wishlist')),
     Center(child: Text('Orders')),
-    Center(child: Text('Help')),
+    HelpDeskScreen(),
     Center(child: Text('Profile')),
   ];
 
