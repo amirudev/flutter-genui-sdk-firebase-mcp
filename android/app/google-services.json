@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "170525274412",
+    "project_id": "flutter-genui-sdk-mcp-12345",
+    "storage_bucket": "flutter-genui-sdk-mcp-12345.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:170525274412:android:02473a3b4da669502f3c89",
+        "android_client_info": {
+          "package_name": "com.example.flutter_genui_sdk_firebase_mcp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBd5CxtlY7W5Kq7wIBmkq7sY6pTenvSmjU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

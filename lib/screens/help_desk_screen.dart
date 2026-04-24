@@ -3,6 +3,7 @@ import 'package:genui/genui.dart';
 import 'package:google_generative_ai/google_generative_ai.dart' as ai;
 import '../models/help_desk_catalog.dart';
 import '../models/product.dart';
+import '../firebase_options.dart';
 
 class HelpDeskScreen extends StatefulWidget {
   const HelpDeskScreen({super.key});
@@ -23,7 +24,11 @@ class _HelpDeskScreenState extends State<HelpDeskScreen> {
   final List<Message> _messages = [];
   bool _isLoading = false;
 
-  static const String _apiKey = String.fromEnvironment('GEMINI_API_KEY', defaultValue: '');
+  static const String _envApiKey = String.fromEnvironment('GEMINI_API_KEY', defaultValue: '');
+  
+  String get _apiKey => _envApiKey.isNotEmpty 
+      ? _envApiKey 
+      : DefaultFirebaseOptions.currentPlatform.apiKey;
 
   @override
   void initState() {
