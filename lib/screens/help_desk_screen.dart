@@ -89,13 +89,22 @@ class _HelpDeskScreenState extends State<HelpDeskScreen> {
 
   // Improved filtering logic that works better with streaming
   String _cleanResponse(String text) {
-    // Remove markdown code blocks
-    String cleaned = text.replaceAll(RegExp(r'```json[\s\S]*?```'), '');
+    String cleaned = text;
+    
+    // Remove fully closed markdown code blocks
+    cleaned = cleaned.replaceAll(RegExp(r'```(?:json)?\s*\n[\s\S]*?```'), '');
     cleaned = cleaned.replaceAll(RegExp(r'```[\s\S]*?```'), '');
+    
+    // Remove incomplete markdown code blocks at the end of the string
+    cleaned = cleaned.replaceAll(RegExp(r'```(?:json)?[\s\S]*$'), '');
+    cleaned = cleaned.replaceAll(RegExp(r'```[\s\S]*$'), '');
     
     // Remove raw JSON objects that look like GenUI commands
     // This is a safety net for when the AI forgets backticks
-    cleaned = cleaned.replaceAll(RegExp(r'\{[\s\S]*?"version"[\s\S]*?\}'), '');
+    cleaned = cleaned.replaceAll(RegExp(r'\{[\s\S]*?"(?:components|catalogId|updateComponents|version)"[\s\S]*?\}'), '');
+    
+    // Remove incomplete raw JSON objects at the end of the string
+    cleaned = cleaned.replaceAll(RegExp(r'\{[\s\S]*?"(?:components|catalogId|updateComponents|version)"[\s\S]*$'), '');
     
     // Final trim and cleanup
     return cleaned.trim();
