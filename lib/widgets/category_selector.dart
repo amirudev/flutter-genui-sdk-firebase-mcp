@@ -26,10 +26,7 @@ class _CategorySelectorState extends State<CategorySelector> {
       height: 80,
       decoration: BoxDecoration(
         border: Border(
-          bottom: BorderSide(
-            color: Colors.grey.withOpacity(0.1),
-            width: 0.5,
-          ),
+          bottom: BorderSide(color: Colors.grey.withOpacity(0.1), width: 0.5),
         ),
       ),
       child: ListView.builder(
@@ -63,7 +60,9 @@ class _CategorySelectorState extends State<CategorySelector> {
                     _categories[index]['label'],
                     style: TextStyle(
                       fontSize: 12,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                      fontWeight: isSelected
+                          ? FontWeight.bold
+                          : FontWeight.w500,
                       color: isSelected ? Colors.black : Colors.grey,
                     ),
                   ),

@@ -20,10 +20,7 @@ class AirbnbSearchBar extends StatelessWidget {
               offset: const Offset(0, 8),
             ),
           ],
-          border: Border.all(
-            color: Colors.grey.withOpacity(0.1),
-            width: 0.5,
-          ),
+          border: Border.all(color: Colors.grey.withOpacity(0.1), width: 0.5),
         ),
         child: Row(
           children: [
@@ -36,17 +33,11 @@ class AirbnbSearchBar extends StatelessWidget {
                 children: [
                   const Text(
                     'Search items',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                    ),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                   ),
                   Text(
                     'Any category • Any brand • Filter items',
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                      fontSize: 12,
-                    ),
+                    style: TextStyle(color: Colors.grey[600], fontSize: 12),
                   ),
                 ],
               ),

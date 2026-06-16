@@ -43,3 +43,17 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Environment variables
+.env
+.env*
+
+# iOS Swift Package Manager
+ios/Runner.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
+ios/Runner.xcworkspace/xcshareddata/swiftpm/
+.swiftpm/
+
+# Firebase config (optional if you want to exclude them)
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+firebase_app_id_file.json

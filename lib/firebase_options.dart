@@ -59,7 +59,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyAN34J47O2d_YJUTb-XAaeelydQzDj6Ij4',
-    appId: '1:170525274412:ios:placeholder', // I don't have iOS appId yet, but I'll use placeholders
+    appId: '1:170525274412:ios:02473a3b4da669502f3c89', // I don't have iOS appId yet, but I'll use placeholders
     messagingSenderId: '170525274412',
     projectId: 'flutter-genui-sdk-mcp-12345',
     storageBucket: 'flutter-genui-sdk-mcp-12345.firebasestorage.app',
@@ -68,7 +68,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyAN34J47O2d_YJUTb-XAaeelydQzDj6Ij4',
-    appId: '1:170525274412:ios:placeholder',
+    appId: '1:170525274412:ios:02473a3b4da669502f3c89',
     messagingSenderId: '170525274412',
     projectId: 'flutter-genui-sdk-mcp-12345',
     storageBucket: 'flutter-genui-sdk-mcp-12345.firebasestorage.app',

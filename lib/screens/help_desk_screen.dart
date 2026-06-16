@@ -4,6 +4,7 @@ import 'package:google_generative_ai/google_generative_ai.dart' as ai;
 import '../models/help_desk_catalog.dart';
 import '../models/product.dart';
 import '../firebase_options.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class HelpDeskScreen extends StatefulWidget {
   const HelpDeskScreen({super.key});
@@ -24,7 +25,7 @@ class _HelpDeskScreenState extends State<HelpDeskScreen> {
   final List<Message> _messages = [];
   bool _isLoading = false;
 
-  static const String _envApiKey = String.fromEnvironment('GEMINI_API_KEY', defaultValue: '');
+  static String get _envApiKey => dotenv.env['GEMINI_API_KEY'] ?? '';
   
   String get _apiKey => _envApiKey.isNotEmpty 
       ? _envApiKey 
