@@ -9,9 +9,17 @@ import 'screens/help_desk_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } catch (e) {
+    if (e.toString().contains('duplicate-app')) {
+      // Ignored: Firebase app already exists natively
+    } else {
+      rethrow;
+    }
+  }
   await dotenv.load(fileName: ".env");
   runApp(
     const ProviderScope(
